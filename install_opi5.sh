@@ -118,7 +118,7 @@ fi
 
 sudo usermod -aG sudo pv
 
-echo 'ATTRS{serial}=="00000000844",ATTRS{idVendor}=="0c45",SYMLINK+="blackwhite_camera",GROUP="pv", MODE="0660"' | sudo tee /etc/udev/rules.d/99-BW-camera.rules
+#echo 'ATTRS{serial}=="00000000844",ATTRS{idVendor}=="0c45",SYMLINK+="blackwhite_camera",GROUP="pv", MODE="0660"' | sudo tee /etc/udev/rules.d/99-BW-camera.rules
 
 sudo systemctl restart udev
 
