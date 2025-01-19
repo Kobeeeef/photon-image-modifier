@@ -201,7 +201,7 @@ SyslogIdentifier=$SERVICE_NAME
 WantedBy=multi-user.target
 EOF
 
-# Reload systemd, enable, and start the service
+# Reload systemd, enable and start the service
 systemctl daemon-reload
 systemctl enable "$SERVICE_NAME.service"
 systemctl start "$SERVICE_NAME.service"
