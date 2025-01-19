@@ -99,65 +99,7 @@ sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
 # Create udev rules for the color camera (ov9782)
-echo 'ATTRS{serial}=="00000000852",ATTRS{idVendor}=="0c45",SYMLINK+="color_camera",GROUP="docker", MODE="0660"' | sudo tee /etc/udev/rules.d/99-color-camera.rules
-
-# Add docker group (if it doesn't already exist)
-getent group docker || sudo groupadd docker
-
-# Add user to docker group
-sudo usermod -aG docker pi
-
-sudo newgrp docker
-
-# Create the user and add to the group
-if ! id "pv" &>/dev/null; then
-    sudo useradd pv -m -s "$SHELL"
-else
-    echo "User pv already exists, skipping user creation."
-fi
-
-sudo usermod -aG sudo pv
-
-#echo 'ATTRS{serial}=="00000000844",ATTRS{idVendor}=="0c45",SYMLINK+="blackwhite_camera",GROUP="pv", MODE="0660"' | sudo tee /etc/udev/rules.d/99-BW-camera.rules
-
-sudo systemctl restart udev
-
-SERVICE_FILE="/etc/systemd/system/photonvision.service"
-
-# Check if the line already exists and add or replace it
-if grep -q "^User=" "$SERVICE_FILE"; then
-    # Replace the existing User line
-    sudo sed -i "s/^User=.*/User=pv/" "$SERVICE_FILE"
-else
-    # Add the User line under the [Service] section
-    sudo sed -i "/^\[Service\]/a User=pv" "$SERVICE_FILE"
-fi
-
-# Reload systemd to apply changes
-sudo systemctl daemon-reload
-sudo systemctl restart photonvision
-
-if [ -d "/opt/photonvision" ]; then
-  sudo chown -R pv:pv /opt/photonvision
-else
-  echo "/opt/photonvision directory not found."
-fi
-
-
-if [ ! -d "/home/pv" ]; then
-    sudo mkdir -p /home/pv
-fi
-
-
-
-if [ -e "/root/.wpilib" ]; then
-  sudo mv /root/.wpilib /home/pv/
-  sudo chown -R pv:pv /home/pv/.wpilib 
-else
-  echo "File does not exist, skipping move."
-fi
-
-
+echo 'ATTRS{serial}=="00000000852",ATTRS{idVendor}=="0c45",SYMLINK+="color_camera"' | sudo tee /etc/udev/rules.d/99-color-camera.rules
 # ----- XCASTER -----
 
 # Ensure the script is run as root
