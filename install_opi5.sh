@@ -149,4 +149,3 @@ systemctl enable "$SERVICE_NAME.service"
 systemctl start "$SERVICE_NAME.service"
 
 echo "Service $SERVICE_NAME has been set up, started, and enabled."
-
