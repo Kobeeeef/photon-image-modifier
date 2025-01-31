@@ -98,8 +98,6 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docke
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
-# Create udev rules for the color camera (ov9782)
-echo 'ATTRS{serial}=="00000000852",ATTRS{idVendor}=="0c45",SYMLINK+="color_camera"' | sudo tee /etc/udev/rules.d/99-color-camera.rules
 # ----- XCASTER -----
 
 # Ensure the script is run as root
