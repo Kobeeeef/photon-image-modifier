@@ -148,7 +148,6 @@ systemctl start "$SERVICE_NAME.service"
 
 echo "Service $SERVICE_NAME has been set up, started, and enabled."
 
-
 cat > /usr/local/bin/detect_video_devices.sh <<EOF
 #!/bin/bash
 
