@@ -149,3 +149,64 @@ systemctl enable "$SERVICE_NAME.service"
 systemctl start "$SERVICE_NAME.service"
 
 echo "Service $SERVICE_NAME has been set up, started, and enabled."
+
+
+cat > /usr/local/bin/detect_video_devices.sh <<EOF
+#!/bin/bash
+
+# Define serial IDs for black-and-white and color cameras
+BW_SERIAL="00000000844"
+COLOR_SERIAL="00000000852"
+
+ACTION=\$1  # Capture the action (add/remove)
+
+# Use absolute paths for reliability
+V4L2_CTL="/usr/bin/v4l2-ctl"
+UDEVADM="/usr/bin/udevadm"
+
+if [ "\$ACTION" == "add" ]; then
+    for device in /dev/video*; do
+        SERIAL=\$("\$UDEVADM" info --query=property --name="\$device" | grep ID_SERIAL_SHORT | cut -d= -f2)
+        [ -z "\$SERIAL" ] && continue
+
+        if "\$V4L2_CTL" -d "\$device" --list-formats-ext 2>/dev/null | grep -q 'MJPG\|YUYV'; then
+            if [ "\$SERIAL" == "\$BW_SERIAL" ]; then
+                ln -sf "\$device" /dev/bw_camera
+            elif [ "\$SERIAL" == "\$COLOR_SERIAL" ]; then
+                ln -sf "\$device" /dev/color_camera
+            fi
+        fi
+    done
+elif [ "\$ACTION" == "remove" ]; then
+    ACTIVE_BW=false
+    ACTIVE_COLOR=false
+
+    for device in /dev/video*; do
+        SERIAL=\$("\$UDEVADM" info --query=property --name="\$device" | grep ID_SERIAL_SHORT | cut -d= -f2)
+
+        if [ "\$SERIAL" == "\$BW_SERIAL" ]; then
+            ACTIVE_BW=true
+        elif [ "\$SERIAL" == "\$COLOR_SERIAL" ]; then
+            ACTIVE_COLOR=true
+        fi
+    done
+
+    # Only remove symlinks if the corresponding camera is actually missing
+    if [ "\$ACTIVE_BW" == "false" ] && [ -L /dev/bw_camera ]; then
+        rm -f /dev/bw_camera
+    fi
+
+    if [ "\$ACTIVE_COLOR" == "false" ] && [ -L /dev/color_camera ]; then
+        rm -f /dev/color_camera
+    fi
+fi
+EOF
+
+chmod +x /usr/local/bin/detect_video_devices.sh
+
+cat > /etc/udev/rules.d/99-camera-symlinks.rules <<EOF
+ACTION=="add", SUBSYSTEM=="video4linux", RUN+="/usr/local/bin/detect_video_devices.sh add"
+ACTION=="remove", SUBSYSTEM=="video4linux", RUN+="/usr/local/bin/detect_video_devices.sh remove"
+EOF
+
+udevadm control --reload-rules
