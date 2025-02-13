@@ -6,7 +6,7 @@
                 @@@@   @@  @@@@@    @@@@@   @@@@@ │ Camera Settings, XCASTER, Docker Container setup and more.
 @@@@    @@@@     @@@@ @@@@ @@@@      @@@@    @@@@ │ 
  @@@@   @@@@@   @@@@   @@  @@@@@                  │
-  @@@@   @@@@@ @@@@@   @@   @@@@@                 │ This orange pi has been flashed by the vision team.
+  @@@@   @@@@@ @@@@@   @@   @@@@@                 │ This orange pi has been flashed by The Matrix Team.
   @@@@@@  @@@@@@@@@  @@@@@   @@@@@                │
     @@@@@@ @@@@@@@ @@@@@@@@@   @@@@@              │
        @@@@@@@@@@@@@@@   @@@@@@@ @@@@@@@          │
